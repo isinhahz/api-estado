@@ -5,10 +5,12 @@
  * Versão 1.0
  ********************************************************************************************************/
 //Import do arquivo estados e cidades
+const e = require('express')
 const dados = require('./estados_cidades.js')
 const MESSAGE_ERROR = {status: false, statuscode: 500, development: 'Isabelle dos Santos de Abreu'}
 //Retorna a lista de estados
 const getAllEstados = function(){
+    //Padrão do Json que será o retorno da função
     let message = {status: true, statuscode: 200, development: 'Isabelle dos Santos de Abreu', uf: []}
     
     dados.listaDeEstados.estados.forEach(function(item){
@@ -27,11 +29,68 @@ const getAllEstados = function(){
 
 //Retorna dados do estado filtrando pela sigla
 const getEstadoBySigla = function(sigla){
+    //Padrão do Json que será o retorno da função
+    let message = {status: true, statuscode: 200, development: 'Isabelle dos Santos de Abreu', estado: null}
 
-}
+    //deixa a sigla maiuscula para evitar erros
+    const siglaUpper = sigla.toUpperCase();
+
+    //Procura o estado, utilizando find para buscar um unico item especifico
+    const estadoEncontrado = dados.listaDeEstados.estados.find(function(item){
+        return item.sigla === siglaUpper
+    })
+
+    //Verifica se o estado foi encontrado e corrige a nomenclatura de como vai aparece, para que mostre da forma desejada
+    if(estadoEncontrado){
+        const resultadoCorrigido = {
+            uf: estadoEncontrado.sigla,
+            descricao: estadoEncontrado.nome,
+            capital: estadoEncontrado.capital,
+            regiao: estadoEncontrado.regiao
+        }
+
+        return resultadoCorrigido
+
+    } else {
+        //Caso não for encontado retorna:
+        return MESSAGE_ERROR
+    } 
+}    
+
+// console.log('Resultado para SP:', getEstadoBySigla('SP'))
+// console.log('Resultado para AC:', getEstadoBySigla('AC'))
+
+ 
 
 //Retorna a capital do estado filtrando pela sigla
 const getCapitalBySigla = function(sigla){
+    //Padrão do Json que será o retorno da função
+    let message = {status: true, statuscode: 200, development: 'Isabelle dos Santos de Abreu', estado: null}
+
+    //deixa a sigla maiuscula para evitar erros
+    const siglaUpper = sigla.toUpperCase();
+
+    //Procura o estado, utilizando find para buscar um unico item especifico
+    const capitalEncontrada = dados.listaDeEstados.estados.find(function(item){
+        return item.sigla === siglaUpper
+    })
+
+    //Verifica se o estado foi encontrado e corrige a nomenclatura de como vai aparece, para que mostre da forma desejada
+    if(estadoEncontrado){
+        const resultadoCorrigido = {
+            uf: estadoEncontrado.sigla,
+            descricao: estadoEncontrado.nome,
+            capital: estadoEncontrado.capital,
+            regiao: estadoEncontrado.regiao
+        }
+
+        return resultadoCorrigido
+
+    } else {
+        //Caso não for encontado retorna:
+        return MESSAGE_ERROR
+    } 
+}    
 
 }
 
