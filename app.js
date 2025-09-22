@@ -63,5 +63,5 @@ app.get('/v1/regiao', function (request, response){
 
 //Start da API
 app.listen(PORT, function(){
-    console.log('API aguardadndo requisições ....')
+    console.log('API aguardando requisições ....')
 })
