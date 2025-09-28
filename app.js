@@ -33,6 +33,7 @@ app.use((request, response, next)=>{
     next() //Proximo
 })
 
+//Retorna todos os estados
 //EndPoints
 app.get('/v1/estados', function(request, response){
     let estados = dados.getAllEstados()
@@ -43,22 +44,44 @@ app.get('/v1/estados', function(request, response){
 
 //Request -> recebe os dados
 //Response -> Envia os dados na API
-app.get('/v1/regiao/estado/:id', function(request, response){
-    let regiaoEstados = request.query.regiao
-    let sigla = request.query.uf
-    let id = request.params.id
 
-    console.log(regiaoEstados)
-    console.log(sigla)
-    console.log(id)
+//retorna os dados do estado pela sigla
+app.get('/v1/estado/sigla/:uf', (request, response) => {
+    let uf = request.params.uf
+    let resultado = dados.getEstadoBySigla(uf)
+    response.status(resultado.statuscode || 200)
+    response.json(resultado)
 })
 
-app.get('/v1/regiao', function (request, response){
-    let regiaoEstados = request.query.regiao
-    let sigla = request.query.uf
+//retorna a capital de um estado pela sigla
+app.get('/v1/estado/capital/:uf', (request, response) => {
+    let uf = request.params.uf
+    let resultado = dados.getCapitalBySigla(uf)
+    response.status(resultado.statuscode || 200)
+    response.json(resultado)
+})
 
-    console.log(regiaoEstados)
-    console.log(sigla)
+//retorna cidades do estado pela sigla (sem ID)
+app.get('/v1/cidades/sigla/:uf', (request, response) => {
+    let uf = request.params.uf
+    let resultado = dados.getCidadesBySigla(uf)
+    response.status(resultado.statuscode || 200)
+    response.json(resultado)
+})
+
+//retorna os estados de uma região
+app.get('/v1/regiao/:regiao', (request, response) => {
+    let regiao = request.params.regiao
+    let resultado = dados.getEstadosByRegiao(regiao)
+    response.status(resultado.statuscode || 200)
+    response.json(resultado)
+})
+
+//retorna os estados que já foram capital do Brasil
+app.get('/v1/capitais-brasil', (request, response) => {
+    let resultado = dados.getEstadoIsCapitalByCountry()
+    response.status(resultado.statuscode || 200)
+    response.json(resultado)
 })
 
 //Start da API

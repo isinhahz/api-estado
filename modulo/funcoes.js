@@ -37,12 +37,12 @@ const getEstadoBySigla = function (sigla) {
     //deixa a sigla maiuscula para evitar erros
     const siglaUpper = sigla.toUpperCase();
 
-    //Procura o estado, utilizando find para buscar um unico item especifico
+    //procura o estado, utilizando find para buscar um unico item especifico
     const estadoEncontrado = dados.listaDeEstados.estados.find(function (item) {
         return item.sigla === siglaUpper
     })
 
-    //Verifica se o estado foi encontrado e corrige a nomenclatura de como vai aparecer, para que mostre da forma desejada
+    //verifica se o estado foi encontrado e corrige da forma que vai aparecer
     if (estadoEncontrado) {
         const resultadoCorrigido = {
             uf: estadoEncontrado.sigla,
@@ -54,10 +54,11 @@ const getEstadoBySigla = function (sigla) {
         return resultadoCorrigido
 
     } else {
-        //Caso não for encontado retorna:
+        //caso não for encontrado
         return MESSAGE_ERROR
     }
 }
+
 
 
 //Retorna a capital do estado filtrando pela sigla
@@ -69,12 +70,12 @@ const getCapitalBySigla = function (sigla) {
     //deixa a sigla maiuscula para evitar erros
     const siglaUpper = sigla.toUpperCase();
 
-    //Procura o estado, utilizando find para buscar um unico item especifico
+    //procura o estado, utilizando find para buscar um unico item especifico
     const capitalEncontrada = dados.listaDeEstados.estados.find(function (item) {
         return item.sigla === siglaUpper
     })
 
-    //Verifica se o estado foi encontrado e corrige
+    //verifica se o estado foi encontrado e corrige
     if (capitalEncontrada) {
         const resultadoCorrigido = {
             uf: capitalEncontrada.sigla, descricao: capitalEncontrada.nome, capital: capitalEncontrada.capital
@@ -83,70 +84,114 @@ const getCapitalBySigla = function (sigla) {
         return resultadoCorrigido
 
     } else {
-        //Caso não for encontado retorna:
+        //caso não for encontrado
         return MESSAGE_ERROR
     }
 }
 
 
+
 //Retorna a lista de estados filtrando pela região
 const getEstadosByRegiao = function (regiao) {
-    //Padrão do Json que será o retorno da função
-    let message = { status: true, statuscode: 200, development: 'Isabelle dos Santos de Abreu', estado: null }
 
-    //deixa a sigla maiuscula para evitar erros
+    let message = {status: true, statuscode: 200, development: 'Isabelle dos Santos de Abreu', regiao: regiao, estados: []}
+
     const regiaoUpper = regiao.toUpperCase();
 
-
-    const regiaoEncontrada = dados.listaDeEstados.regiao.find(function (item) {
-        return item.regiao === regiaoUpper
+    //filtra todos os estados das regiões
+    const estadosFiltrados = dados.listaDeEstados.estados.filter(function (item) {
+        return item.regiao.toUpperCase() === regiaoUpper
     })
 
+    if (estadosFiltrados.length > 0) {
+        //monta o array de estados
+        estadosFiltrados.forEach((estado) => {
+            message.estados.push({
+                uf: estado.sigla,
+                descricao: estado.nome
+            })
+        })
+
+        return message
+    } else {
+        return MESSAGE_ERROR
+    }
 }
 
 
-    //Retorna a lista de estados que formam a capital de um pais filtrando pelo pais
-    const getEstadoIsCapitalByCountry = function (pais) {
-
-        let message = { status:true, statuscode: 200, development: 'Isabelee dos Santos de Abreu', }
-    }
-
-    
-    //Retorna as cidades exitentes em um estado, filtrando pela sigla
-    const getCidadesBySigla = function (sigla) {
-        //Padrão do Json que será o retorno da função
-        let message = { status: true, statuscode: 200, development: 'Isabelle dos Santos de Abreu', uf: '', descricao: '', cidades:[], quantidade_cidades: 0 }
+//console.log(getEstadosByRegiao('NORDESTE'))
 
 
+   
+//Retorna a lista de estados que formam a capital de um pais filtrando pelo pais
+    const getEstadoIsCapitalByCountry = function () {
 
-        const siglaUpper = sigla.toUpperCase()
+    let message = {status: true, statuscode: 200, development: 'Isabelle dos Santos de Abreu', capitais: []}
 
-        const EstadoEncontrado = dados.listaDeEstados.estados.find(function (item) {
-            return item.sigla === siglaUpper
-        })
-
-        if (EstadoEncontrado) {
-            // ATUALIZA O OBJETO MESSAGE DIRETAMENTE COM OS DADOS ENCONTRADO
-            message.uf = EstadoEncontrado.sigla;
-            message.descricao = EstadoEncontrado.nome;
-            message.cidades = EstadoEncontrado.cidades;
-            message.quantidade_cidades = EstadoEncontrado.cidades.length;
-
-            return message; // Retorna o objeto message completo
-    
-        } else {
-            // Caso não encontre: retorna o objeto de erro
-            return MESSAGE_ERROR;
+    //percorre todos os estados
+    dados.listaDeEstados.estados.forEach(function (estado) {
+        //verifica se o estado tem a propriedade 'capital_pais'
+        if (estado.capital_pais) {
+            message.capitais.push({
+                capital_atual: estado.capital_pais.capital === true,
+                uf: estado.sigla,
+                descricao: estado.nome,
+                capital: estado.capital,
+                regiao: estado.regiao,
+                capital_pais_ano_inicio: estado.capital_pais.ano_inicio,
+                capital_pais_ano_termino: estado.capital_pais.ano_fim
+            })
         }
+    })
 
+    //verifica se encontrou alguma capital histórica
+    if (message.capitais.length > 0) {
+        return message
+    } else {
+        return MESSAGE_ERROR
     }
+}
 
+   // console.log(getEstadoIsCapitalByCountry('BRASIL'))
+    
+    
+    //retorna as cidades exitentes em um estado, filtrando pela sigla
+    const getCidadesBySigla = function (sigla) {
+      
+    //padrão do JSON de retorno
+    let message = {status: true, statuscode: 200, development: 'Isabelle dos Santos de Abreu', uf: '', descricao: '', quantidade_cidades: 0,  cidades: []}
 
-    //console.log(getCidadesBySigla('SP'))
+    //padroniza a sigla para maiúsculo
+    const siglaUpper = sigla.toUpperCase()
 
+    //busca o estado correspondente
+    const estadoEncontrado = dados.listaDeEstados.estados.find(function (item) {
+        return item.sigla === siglaUpper
+    })
+
+      if (estadoEncontrado) {
+        message.uf = estadoEncontrado.sigla
+        message.descricao = estadoEncontrado.nome
+       
+        //para ignorar o ID, trazendo apenas os nomes
+        message.cidades = estadoEncontrado.cidades.map(cidade => cidade.nome)
+        message.quantidade_cidades = message.cidades.length
+
+        return message
+    } else {
+        return MESSAGE_ERROR // estado não encontrado
+    }
+}
+
+//console.log(getCidadesBySigla('AC'))
 
     module.exports = {
-        getAllEstados
+        getAllEstados,
+        getEstadoBySigla,
+        getCapitalBySigla,
+        getEstadosByRegiao,
+        getEstadoIsCapitalByCountry,
+        getCidadesBySigla
     }
 
 
